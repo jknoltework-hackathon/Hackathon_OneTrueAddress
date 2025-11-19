@@ -1016,8 +1016,8 @@ body[data-theme="dark"] .time-saved-widget:hover {
 /* Responsive adjustments for time saved widget */
 @media (max-width: 768px) {
     .time-saved-widget {
-        top: 10px;
-        right: 65px;
+        top: 75px;
+        right: 20px;
         padding: 8px 12px;
         gap: 8px;
     }
@@ -1037,11 +1037,19 @@ body[data-theme="dark"] .time-saved-widget:hover {
     .hours-value {
         font-size: 18px;
     }
+    
+    .settings-btn {
+        top: 15px;
+        right: 15px;
+        width: 45px;
+        height: 45px;
+    }
 }
 
 @media (max-width: 480px) {
     .time-saved-widget {
-        right: 60px;
+        top: 65px;
+        right: 15px;
         padding: 6px 10px;
         gap: 6px;
     }
@@ -1056,6 +1064,13 @@ body[data-theme="dark"] .time-saved-widget:hover {
     
     .hours-value {
         font-size: 16px;
+    }
+    
+    .settings-btn {
+        top: 10px;
+        right: 10px;
+        width: 40px;
+        height: 40px;
     }
 }
 

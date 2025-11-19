@@ -781,6 +781,14 @@ class GoldenSourceConnector:
                 # Concatenate with semicolon separator
                 if bad_types:
                     concatenated_bad_type = '; '.join(bad_types)
+                    
+                    # Truncate if too long (max 50 chars for Bad Type field in database)
+                    max_length = 50
+                    if len(concatenated_bad_type) > max_length:
+                        # Truncate and add ellipsis
+                        concatenated_bad_type = concatenated_bad_type[:max_length-3] + '...'
+                        print(f"  ⚠️  Bad Type truncated to {max_length} characters")
+                    
                     consolidated_record[bad_type_col] = concatenated_bad_type
                     print(f"  Concatenated Bad Type from {len(internal_matches)} records: '{concatenated_bad_type}'")
                 else:
@@ -1005,6 +1013,28 @@ class GoldenSourceConnector:
             print(f"  Original fields: {list(consolidated_record.keys())}")
             print(f"  Filtered fields: {list(filtered_record.keys())}")
             print(f"  Removed fields: {[k for k in consolidated_record.keys() if k.startswith('_')]}")
+            
+            # Truncate string fields that might be too long for database constraints
+            # Common varchar(50) fields in the database
+            varchar_50_patterns = ['bad type', 'badtype', 'media', 'active customer', 
+                                   'exclusion', 'engineering review', 'state', 'city']
+            
+            # Build a case-insensitive lookup
+            for field_key in list(filtered_record.keys()):
+                field_key_normalized = field_key.lower().replace(' ', '').replace('_', '')
+                
+                # Check if this field matches any of our varchar(50) patterns
+                for pattern in varchar_50_patterns:
+                    pattern_normalized = pattern.replace(' ', '').replace('_', '')
+                    if pattern_normalized in field_key_normalized or field_key_normalized in pattern_normalized:
+                        # Found a match - check and truncate if needed
+                        if filtered_record[field_key] is not None:
+                            field_value = str(filtered_record[field_key])
+                            if len(field_value) > 50:
+                                original_value = field_value
+                                filtered_record[field_key] = field_value[:47] + '...'
+                                print(f"  ⚠️  Truncated '{field_key}': '{original_value}' -> '{filtered_record[field_key]}'")
+                        break  # Move to next field after finding a match
             
             # Build INSERT statement with filtered fields
             columns = list(filtered_record.keys())

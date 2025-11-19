@@ -1,8 +1,55 @@
 # Hack_OneTrueAddress
-Hack-Ai-Thon OneTrueAddress agent repository
+
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Online-success)](https://hack-onetrueaddress-r3xv.onrender.com/)
+[![API Status](https://img.shields.io/badge/API-v1-blue)](https://hack-onetrueaddress-r3xv.onrender.com/api/v1/health)
+[![Python](https://img.shields.io/badge/Python-3.9+-blue.svg)](https://www.python.org/downloads/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+
+Hack-Ai-Thon OneTrueAddress agent repository - AI-powered address matching and consolidation system
+
+## 🌐 Live Demo
+
+**Web Interface:** [https://hack-onetrueaddress-r3xv.onrender.com/](https://hack-onetrueaddress-r3xv.onrender.com/)
+
+**API Base URL:** `https://hack-onetrueaddress-r3xv.onrender.com/api/v1`
+
+Try it now! The web interface provides an intuitive UI with light/dark themes, while the REST API offers programmatic access for integration.
+
+> ⚠️ **Note:** First request may take 30-60 seconds (free tier cold start). Subsequent requests are fast.
+
+### Quick Start
+
+**Try the Web UI:** Visit [https://hack-onetrueaddress-r3xv.onrender.com/](https://hack-onetrueaddress-r3xv.onrender.com/) and enter an address to match!
+
+**Try the API:**
+```bash
+# Health check
+curl https://hack-onetrueaddress-r3xv.onrender.com/api/v1/health
+
+# Match an address
+curl -X POST https://hack-onetrueaddress-r3xv.onrender.com/api/v1/match \
+  -H "Content-Type: application/json" \
+  -d '{"address": "123 Main St, Clearwater, FL 33755", "threshold": 90}'
+```
+
+**Python:**
+```python
+import requests
+r = requests.post('https://hack-onetrueaddress-r3xv.onrender.com/api/v1/match',
+                  json={'address': '123 Main St, Clearwater, FL 33755'})
+print(r.json())
+```
 
 ## Overview
 An AI-powered address matching and consolidation system that uses fuzzy string matching combined with Claude AI to match user-input addresses against two database tables (Golden Source and Internal). The system provides intelligent address matching, identifies discrepancies, consolidates duplicate records, and pushes updates to a tracking table for review.
+
+**Key Features:**
+- 🌐 **Live Web UI** with light/dark theme support
+- 🔌 **REST API** for programmatic access
+- 🤖 **AI-powered matching** with Claude
+- 📊 **Dual-table search** (Golden Source + Internal)
+- 🔄 **Smart consolidation** with business rules
+- ⏱️ **Time tracking** - measures hours saved
 
 ## Setup
 
@@ -49,6 +96,9 @@ CONFIDENCE_THRESHOLD=90.0
 - For MySQL: `pip install mysql-connector-python`
 - SQLite: Included with Python
 
+### 4. API Access (Optional)
+The system provides a REST API for programmatic access. See [API_DOCUMENTATION.md](API_DOCUMENTATION.md) for complete API reference and examples.
+
 ## Usage
 
 ### Web Interface (Recommended)
@@ -90,6 +140,91 @@ The agent will:
 3. Send top matches to Claude for AI-powered review and analysis
 4. Display the best match with similarity score, Claude's reasoning, and source table
 5. Flag business rule exceptions for matches below the confidence threshold
+
+### REST API
+
+The system provides a RESTful API for programmatic access. Use the **live deployed API** or run locally.
+
+#### 🌐 Live API (Deployed on Render)
+
+**Base URL:** `https://hack-onetrueaddress-r3xv.onrender.com/api/v1`
+
+```bash
+# Health check
+curl https://hack-onetrueaddress-r3xv.onrender.com/api/v1/health
+
+# Match an address
+curl -X POST https://hack-onetrueaddress-r3xv.onrender.com/api/v1/match \
+  -H "Content-Type: application/json" \
+  -d '{"address": "123 Main St, Clearwater, FL 33755", "threshold": 90}'
+
+# Get time saved
+curl https://hack-onetrueaddress-r3xv.onrender.com/api/v1/time_saved
+```
+
+**Python Example (Live API):**
+```python
+import requests
+
+BASE_URL = "https://hack-onetrueaddress-r3xv.onrender.com/api/v1"
+
+# Match an address
+response = requests.post(
+    f"{BASE_URL}/match",
+    json={'address': '123 Main St, Clearwater, FL 33755', 'threshold': 90}
+)
+data = response.json()
+
+if data['success'] and data['match_found']:
+    print(f"✓ Match found: {data['confidence']}% confidence")
+    print(f"Master Address: {data['matched_address']['MasterAddress']}")
+    print(f"Golden Source Matches: {data['total_golden_source']}")
+    print(f"Internal Matches: {data['total_internal']}")
+```
+
+#### 💻 Local API
+
+Run locally for development:
+
+```bash
+# Start the server
+python web_app.py
+
+# Test locally
+curl -X POST http://localhost:5000/api/v1/match \
+  -H "Content-Type: application/json" \
+  -d '{"address": "123 Main St, City, FL 12345", "threshold": 90}'
+```
+
+#### 📋 Available Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/v1/health` | Health check |
+| POST | `/api/v1/match` | Match address against databases |
+| POST | `/api/v1/consolidate` | Consolidate multiple records |
+| POST | `/api/v1/push_updates` | Push updates to database |
+| POST | `/api/v1/write_to_internal` | Write Golden Source to internal |
+| GET | `/api/v1/time_saved` | Get total time saved |
+
+#### 🧪 Testing the API
+
+Test against the live deployment or localhost:
+
+```bash
+# Test live API
+export API_BASE_URL="https://hack-onetrueaddress-r3xv.onrender.com/api/v1"
+python test_api.py
+
+# Test specific address
+API_BASE_URL="https://hack-onetrueaddress-r3xv.onrender.com/api/v1" \
+  python test_api.py "123 Main St, Clearwater, FL 33755"
+
+# Test local API
+python test_api.py  # Defaults to localhost:5000
+```
+
+**Full API Documentation:** See [API_DOCUMENTATION.md](API_DOCUMENTATION.md) for complete details, request/response examples, and integration guides.
 
 ## How It Works
 
@@ -139,17 +274,46 @@ When multiple Internal addresses match a single Golden Source address, the syste
    - **Scenario 2**: Single Internal Match with MasterAddress Mismatch (tpi: 10)
    - **Scenario 3**: No Internal Match / Golden Source Only (tpi: 5)
 
+## 🚀 Deployment
+
+The application is deployed and accessible at:
+- **Web UI:** [https://hack-onetrueaddress-r3xv.onrender.com/](https://hack-onetrueaddress-r3xv.onrender.com/)
+- **API:** `https://hack-onetrueaddress-r3xv.onrender.com/api/v1`
+
+**Deployment Platform:** Render (free tier)
+
+**To deploy your own instance:**
+1. Fork this repository
+2. Create a new Web Service on [Render](https://render.com)
+3. Connect your GitHub repository
+4. Set environment variables (see `.env` template above)
+5. Deploy! (automatic builds on git push)
+
+See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed deployment instructions.
+
 ## Project Structure
 
-- `web_app.py` - Flask web application with endpoints for address matching and updates
+### Core Application
+- `web_app.py` - Flask web application (web UI + API server)
+- `api_routes.py` - REST API blueprint with v1 endpoints
 - `main.py` - Command-line interface for address matching
 - `address_agent.py` - Main agent orchestrating fuzzy matching and Claude review
 - `claude_client.py` - Claude API interaction module
 - `golden_source.py` - Database connector with fuzzy matching, consolidation, and update logic
 - `config.py` - Configuration management (environment variables)
+
+### Frontend
 - `templates/index.html` - Web UI template with dual-table results display
-- `static/` - CSS and static assets (logo, styles with theme support)
-- `requirements.txt` - Python dependencies (Flask, anthropic, rapidfuzz, psycopg2-binary, etc.)
+- `static/style.css` - Modern CSS with light/dark theme support
+- `static/logo.png` - Cool & Gang Communications branding
+
+### Testing & Documentation
+- `test_api.py` - API test suite with example usage
+- `requirements.txt` - Python dependencies (Flask, anthropic, rapidfuzz, gunicorn, etc.)
+- `API_DOCUMENTATION.md` - Complete REST API documentation with examples
+- `API_QUICK_REFERENCE.md` - Quick reference card for API
+- `DEPLOYMENT.md` - Deployment guide for Render and other platforms
+- `README.md` - This file
 
 ## Key Features
 
