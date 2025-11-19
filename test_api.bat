@@ -31,7 +31,7 @@ echo.
 curl -s -w "\nHTTP Status: %%{http_code}\n" ^
   -H "Content-Type: application/json" ^
   -X POST ^
-  -d "{\"address\": \"10 Village Ln, Safety Harbor, FL, 34695\", \"threshold\": 90}" ^
+  -d "{\"address\": \"27466 US HIGHWAY 19 N LOT 64 ST, CLEARWATER, FL 33761\", \"threshold\": 90}" ^
   "%API_URL%/match"
 echo.
 echo ------------------------------------------------------------
