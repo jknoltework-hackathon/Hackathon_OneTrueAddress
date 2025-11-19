@@ -60,7 +60,7 @@ def match_address():
             'success': True,
             'input_address': result.get('input_address', input_address),
             'candidates_searched': result.get('candidates_searched', 0),
-            'confidence_threshold': result.get('confidence_threshold', 95.0),
+            'confidence_threshold': result.get('confidence_threshold', 90.0),
             'search_method': result.get('search_method', 'unknown')
         }
         

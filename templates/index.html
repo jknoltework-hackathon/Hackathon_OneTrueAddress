@@ -85,7 +85,7 @@
                             
                             <div class="form-group slider-group">
                                 <label for="thresholdSlider">
-                                    Fuzzy Match Threshold: <span id="thresholdValue">95</span>%
+                                    Fuzzy Match Threshold: <span id="thresholdValue">90</span>%
                                 </label>
                                 <input 
                                     type="range" 
@@ -93,7 +93,7 @@
                                     name="threshold" 
                                     min="75" 
                                     max="100" 
-                                    value="95" 
+                                    value="90" 
                                     step="1"
                                     class="threshold-slider"
                                 >
@@ -354,7 +354,7 @@
                             <div class="address-card-header">
                                 <span class="address-number">${index + 1}</span>
                                 <div class="match-scores">
-                                    <span class="fuzzy-match-badge">Fuzzy Match: ${score.toFixed(1)}%</span>
+                                    <span class="fuzzy-match-badge">Fuzzy Match: ${Math.round(score)}%</span>
                                     ${aiConfidence > 0 ? `<span class="ai-match-badge">AI Analysis: ${aiConfidence}%</span>` : ''}
                                 </div>
                             </div>`;
@@ -433,7 +433,7 @@
                             <div class="address-card-header">
                                 <span class="address-number">${index + 1}</span>
                                 <div class="match-scores">
-                                    <span class="fuzzy-match-badge">Fuzzy Match: ${score.toFixed(1)}%</span>
+                                    <span class="fuzzy-match-badge">Fuzzy Match: ${Math.round(score)}%</span>
                                     ${aiConfidence > 0 ? `<span class="ai-match-badge">AI Analysis: ${aiConfidence}%</span>` : ''}
                                 </div>
                             </div>`;
@@ -881,6 +881,8 @@
                 const selectedTheme = e.target.value;
                 document.body.setAttribute('data-theme', selectedTheme);
                 localStorage.setItem('theme', selectedTheme);
+                // Automatically close the settings menu after theme selection
+                settingsMenu.classList.remove('show');
             });
         });
     </script>

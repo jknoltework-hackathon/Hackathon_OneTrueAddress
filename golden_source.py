@@ -558,6 +558,7 @@ class GoldenSourceConnector:
         4. If any addresses have Exclusion flag 'Y' or Engineering review 'Y', retain/update 'Y' flags.
         5. If no Active Customer but there is Fiber Media, retain the Fiber Media record.
         6. If multiple Active Customers or multiple Fiber Media records, return error for manual review.
+        7. For multiple matches, concatenate all unique Bad Type values with semicolon separator.
         
         Args:
             internal_matches: List of address dictionaries from internal table
@@ -756,6 +757,37 @@ class GoldenSourceConnector:
             print(f"  Set Engineering Review flag to: Y")
         elif engineering_col and consolidated_record.get(engineering_col) is None:
             consolidated_record[engineering_col] = 'N'
+        
+        # Concatenate Bad Type field from all records (for multiple matches)
+        if len(internal_matches) > 1:
+            # Find the Bad Type column (case-insensitive)
+            bad_type_col = None
+            for key in sample_record.keys():
+                key_lower = key.lower().replace(' ', '').replace('_', '')
+                if 'badtype' in key_lower or key.strip() == 'Bad Type':
+                    bad_type_col = key
+                    break
+            
+            if bad_type_col:
+                # Collect all unique non-empty Bad Type values from all records
+                bad_types = []
+                for record in internal_matches:
+                    bad_type_value = str(record.get(bad_type_col, '')).strip()
+                    if bad_type_value and bad_type_value.upper() not in ['NONE', 'N/A', 'NULL', '']:
+                        # Only add if not already in list (case-insensitive check)
+                        if bad_type_value not in bad_types and bad_type_value.lower() not in [bt.lower() for bt in bad_types]:
+                            bad_types.append(bad_type_value)
+                
+                # Concatenate with semicolon separator
+                if bad_types:
+                    concatenated_bad_type = '; '.join(bad_types)
+                    consolidated_record[bad_type_col] = concatenated_bad_type
+                    print(f"  Concatenated Bad Type from {len(internal_matches)} records: '{concatenated_bad_type}'")
+                else:
+                    # No valid bad types found, keep the existing value or set to empty
+                    if bad_type_col not in consolidated_record or not consolidated_record.get(bad_type_col):
+                        consolidated_record[bad_type_col] = ''
+                    print(f"  No valid Bad Type values found across records")
         
         # Rule: Use address fields from Golden Source if provided
         if golden_source_address:
