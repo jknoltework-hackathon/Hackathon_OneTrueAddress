@@ -3,7 +3,7 @@ import requests
 # Test the API endpoint
 response = requests.post(
     'https://hack-onetrueaddress-r3xv.onrender.com/api/v1/match',
-    json={'address': '10 Village Ln, Safety Harbor, FL, 34695', 'threshold': 90}
+    json={'address': '10 Village Ln, Safety Harbor, FL, 34695', 'threshold': 70}
 )
 
 print(f"Status Code: {response.status_code}")
