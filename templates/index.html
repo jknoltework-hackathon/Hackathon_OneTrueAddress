@@ -344,6 +344,7 @@
                     
                     data.golden_source_matches.forEach((addr, index) => {
                         const score = addr._similarity_score || 0;
+                        const aiConfidence = addr._ai_analysis ? (addr._ai_analysis.confidence || 0) : 0;
                         console.log(`Golden Source match ${index + 1}: score=${score.toFixed(1)}%, has AI analysis=${!!addr._ai_analysis}`);
                         if (addr._ai_analysis) {
                             console.log(`  AI analysis:`, addr._ai_analysis);
@@ -352,7 +353,10 @@
                         addressesHtml += `<div class="matched-address-card golden-source">
                             <div class="address-card-header">
                                 <span class="address-number">${index + 1}</span>
-                                <span class="similarity-badge">${score.toFixed(1)}%</span>
+                                <div class="match-scores">
+                                    <span class="fuzzy-match-badge">Fuzzy Match: ${score.toFixed(1)}%</span>
+                                    ${aiConfidence > 0 ? `<span class="ai-match-badge">AI Analysis: ${aiConfidence}%</span>` : ''}
+                                </div>
                             </div>`;
                         
                         // Display AI analysis if available
@@ -419,6 +423,7 @@
                     
                     sortedInternalMatches.forEach((addr, index) => {
                         const score = addr._similarity_score || 0;
+                        const aiConfidence = addr._ai_analysis ? (addr._ai_analysis.confidence || 0) : 0;
                         console.log(`Internal match ${index + 1}: score=${score.toFixed(1)}%, has AI analysis=${!!addr._ai_analysis}`);
                         if (addr._ai_analysis) {
                             console.log(`  AI analysis:`, addr._ai_analysis);
@@ -427,7 +432,10 @@
                         addressesHtml += `<div class="matched-address-card internal-match">
                             <div class="address-card-header">
                                 <span class="address-number">${index + 1}</span>
-                                <span class="similarity-badge">${score.toFixed(1)}%</span>
+                                <div class="match-scores">
+                                    <span class="fuzzy-match-badge">Fuzzy Match: ${score.toFixed(1)}%</span>
+                                    ${aiConfidence > 0 ? `<span class="ai-match-badge">AI Analysis: ${aiConfidence}%</span>` : ''}
+                                </div>
                             </div>`;
                         
                         // Display AI analysis if available
