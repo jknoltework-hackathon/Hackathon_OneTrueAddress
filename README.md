@@ -49,6 +49,9 @@ CONFIDENCE_THRESHOLD=90.0
 - For MySQL: `pip install mysql-connector-python`
 - SQLite: Included with Python
 
+### 4. API Access (Optional)
+The system provides a REST API for programmatic access. See [API_DOCUMENTATION.md](API_DOCUMENTATION.md) for complete API reference and examples.
+
 ## Usage
 
 ### Web Interface (Recommended)
@@ -90,6 +93,48 @@ The agent will:
 3. Send top matches to Claude for AI-powered review and analysis
 4. Display the best match with similarity score, Claude's reasoning, and source table
 5. Flag business rule exceptions for matches below the confidence threshold
+
+### REST API
+
+Access the system programmatically via REST API:
+
+```bash
+# Test the API
+python test_api.py
+
+# Match an address via API
+curl -X POST http://localhost:5000/api/v1/match \
+  -H "Content-Type: application/json" \
+  -d '{"address": "123 Main St, City, FL 12345", "threshold": 90}'
+
+# Get time saved
+curl http://localhost:5000/api/v1/time_saved
+```
+
+**Available Endpoints:**
+- `GET /api/v1/health` - Health check
+- `POST /api/v1/match` - Match address
+- `POST /api/v1/consolidate` - Consolidate records
+- `POST /api/v1/push_updates` - Push updates to database
+- `POST /api/v1/write_to_internal` - Write Golden Source to internal
+- `GET /api/v1/time_saved` - Get total time saved
+
+**Python Example:**
+```python
+import requests
+
+response = requests.post(
+    'http://localhost:5000/api/v1/match',
+    json={'address': '123 Main St, City, FL 12345', 'threshold': 90}
+)
+data = response.json()
+
+if data['success'] and data['match_found']:
+    print(f"Match found: {data['confidence']}% confidence")
+    print(f"Master Address: {data['matched_address']['MasterAddress']}")
+```
+
+For complete API documentation, see [API_DOCUMENTATION.md](API_DOCUMENTATION.md)
 
 ## How It Works
 
@@ -142,14 +187,17 @@ When multiple Internal addresses match a single Golden Source address, the syste
 ## Project Structure
 
 - `web_app.py` - Flask web application with endpoints for address matching and updates
+- `api_routes.py` - REST API blueprint with v1 endpoints
 - `main.py` - Command-line interface for address matching
 - `address_agent.py` - Main agent orchestrating fuzzy matching and Claude review
 - `claude_client.py` - Claude API interaction module
 - `golden_source.py` - Database connector with fuzzy matching, consolidation, and update logic
 - `config.py` - Configuration management (environment variables)
+- `test_api.py` - API test suite with example usage
 - `templates/index.html` - Web UI template with dual-table results display
 - `static/` - CSS and static assets (logo, styles with theme support)
 - `requirements.txt` - Python dependencies (Flask, anthropic, rapidfuzz, psycopg2-binary, etc.)
+- `API_DOCUMENTATION.md` - Complete REST API documentation with examples
 
 ## Key Features
 

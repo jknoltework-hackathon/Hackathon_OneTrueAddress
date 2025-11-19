@@ -1,10 +1,14 @@
 """Flask web application for OneTrueAddress agent."""
 from flask import Flask, render_template, request, jsonify
 from address_agent import AddressAgent
+from api_routes import api
 import traceback
 import atexit
 
 app = Flask(__name__)
+
+# Register API blueprint
+app.register_blueprint(api)
 
 # Global agent instance (initialized on first use)
 agent = None
@@ -301,5 +305,8 @@ def add_header(response):
     return response
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    import os
+    port = int(os.getenv('PORT', 5000))
+    debug = os.getenv('FLASK_ENV', 'production') == 'development'
+    app.run(debug=debug, host='0.0.0.0', port=port)
 
