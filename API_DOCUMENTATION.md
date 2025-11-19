@@ -1,11 +1,15 @@
 # OneTrueAddress API Documentation
 
 Version: 1.0  
-Base URL: `http://your-server:5000/api/v1`
+
+**Live API Base URL:** `https://hack-onetrueaddress-r3xv.onrender.com/api/v1`  
+**Local Development:** `http://localhost:5000/api/v1`
 
 ## Overview
 
 The OneTrueAddress API provides programmatic access to address matching, consolidation, and database update functionality. All endpoints accept and return JSON data.
+
+**Live Demo:** The API is deployed and accessible at [https://hack-onetrueaddress-r3xv.onrender.com/api/v1](https://hack-onetrueaddress-r3xv.onrender.com/api/v1)
 
 ## Authentication
 
@@ -35,7 +39,12 @@ Check if the API is running.
 }
 ```
 
-**Example:**
+**Example (Live API):**
+```bash
+curl https://hack-onetrueaddress-r3xv.onrender.com/api/v1/health
+```
+
+**Example (Local):**
 ```bash
 curl http://localhost:5000/api/v1/health
 ```
@@ -129,7 +138,17 @@ Match an input address against Golden Source and Internal databases using fuzzy 
 }
 ```
 
-**Example:**
+**Example (Live API):**
+```bash
+curl -X POST https://hack-onetrueaddress-r3xv.onrender.com/api/v1/match \
+  -H "Content-Type: application/json" \
+  -d '{
+    "address": "123 Main St, Clearwater, FL 33755",
+    "threshold": 90
+  }'
+```
+
+**Example (Local):**
 ```bash
 curl -X POST http://localhost:5000/api/v1/match \
   -H "Content-Type: application/json" \
@@ -139,14 +158,16 @@ curl -X POST http://localhost:5000/api/v1/match \
   }'
 ```
 
-**Python Example:**
+**Python Example (Live API):**
 ```python
 import requests
 
+BASE_URL = "https://hack-onetrueaddress-r3xv.onrender.com/api/v1"
+
 response = requests.post(
-    'http://localhost:5000/api/v1/match',
+    f'{BASE_URL}/match',
     json={
-        'address': '123 Main St, Anytown, FL 12345',
+        'address': '123 Main St, Clearwater, FL 33755',
         'threshold': 90
     }
 )

@@ -1,6 +1,13 @@
 # OneTrueAddress API - Quick Reference
 
 ## Base URL
+
+**Live (Deployed):**
+```
+https://hack-onetrueaddress-r3xv.onrender.com/api/v1
+```
+
+**Local Development:**
 ```
 http://localhost:5000/api/v1
 ```
@@ -9,11 +16,21 @@ http://localhost:5000/api/v1
 
 ### 1. Health Check
 ```bash
+# Live API
+curl https://hack-onetrueaddress-r3xv.onrender.com/api/v1/health
+
+# Local
 curl http://localhost:5000/api/v1/health
 ```
 
 ### 2. Match Address
 ```bash
+# Live API
+curl -X POST https://hack-onetrueaddress-r3xv.onrender.com/api/v1/match \
+  -H "Content-Type: application/json" \
+  -d '{"address": "123 Main St, Clearwater, FL 33755", "threshold": 90}'
+
+# Local
 curl -X POST http://localhost:5000/api/v1/match \
   -H "Content-Type: application/json" \
   -d '{"address": "123 Main St, City, FL 12345", "threshold": 90}'
@@ -23,9 +40,15 @@ curl -X POST http://localhost:5000/api/v1/match \
 ```python
 import requests
 
+# Use live API
+BASE_URL = "https://hack-onetrueaddress-r3xv.onrender.com/api/v1"
+
+# Or use local API
+# BASE_URL = "http://localhost:5000/api/v1"
+
 # Match address
-r = requests.post('http://localhost:5000/api/v1/match', 
-                  json={'address': '123 Main St, City, FL 12345'})
+r = requests.post(f'{BASE_URL}/match', 
+                  json={'address': '123 Main St, Clearwater, FL 33755'})
 result = r.json()
 
 if result['match_found']:
